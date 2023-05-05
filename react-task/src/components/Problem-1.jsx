@@ -9,6 +9,16 @@ const Problem1 = () => {
 
     const handleClick = (val) =>{
         setShow(val);
+        let items = [...sortArray(JSON.parse(localStorage.getItem('localData')))];
+        if(val==="active" && items.length > 0){
+            setAllData(items.filter(a => a.status.toLowerCase() === "active"));
+        }
+        else if(val==="completed" && items.length > 0){
+            setAllData(items.filter(a => a.status.toLowerCase() === "completed"));
+        }
+        else{
+            setAllData(items);
+        }
     }
 
     const handleSubmit = () => {
@@ -27,8 +37,21 @@ const Problem1 = () => {
     }
 
     useEffect(() => {
-        setAllData(JSON.parse(localStorage.getItem('localData')))
+        let dt = JSON.parse(localStorage.getItem('localData'));
+        setAllData(dt ? sortArray(dt) : []);
     },[])
+
+    const sortArray = (data) => {
+        return data.sort(function (a, b) {
+            if (a.status.toLowerCase() < b.status.toLowerCase()) {
+              return -1;
+            }
+            if (a.status.toLowerCase() > b.status.toLowerCase()) {
+              return 1;
+            }
+            return 0;
+          });
+    }
 
     return (
 
@@ -82,7 +105,7 @@ const Problem1 = () => {
                         </thead>
                         <tbody>
                             {
-                                allData && allData.map((item,index) => (
+                                allData.length > 0 && allData.map((item,index) => (
                                     <tr key={index}>
                                         <td>{item.name}</td>
                                         <td>{item.status}</td>
