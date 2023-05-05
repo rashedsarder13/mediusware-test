@@ -1,12 +1,34 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 const Problem1 = () => {
 
     const [show, setShow] = useState('all');
+    const [name, setName] = useState("");
+    const [status, setStatus] = useState("");
+    const [allData, setAllData] = useState([]);
 
     const handleClick = (val) =>{
         setShow(val);
     }
+
+    const handleSubmit = () => {
+        let data = JSON.parse(localStorage.getItem('localData'));
+        let items=[];
+        if(data === null){
+            items = [...allData];
+            items.push({name:name, status:status});
+        }
+        else{
+            items = [...data]
+            items.push({name:name, status:status});
+        }
+        setAllData(items);
+        localStorage.setItem('localData', JSON.stringify(items));
+    }
+
+    useEffect(() => {
+        setAllData(JSON.parse(localStorage.getItem('localData')))
+    },[])
 
     return (
 
@@ -14,12 +36,24 @@ const Problem1 = () => {
             <div className="row justify-content-center mt-5">
                 <h4 className='text-center text-uppercase mb-5'>Problem-1</h4>
                 <div className="col-6 ">
-                    <form className="row gy-2 gx-3 align-items-center mb-4">
+                    <form className="row gy-2 gx-3 align-items-center mb-4" onSubmit={handleSubmit}>
                         <div className="col-auto">
-                            <input type="text" className="form-control" placeholder="Name"/>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Name"
+                                onChange={(e) => setName(e.target.value)}
+                                value={name}
+                            />
                         </div>
                         <div className="col-auto">
-                            <input type="text" className="form-control" placeholder="Status"/>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                placeholder="Status"
+                                onChange={(e) => setStatus(e.target.value)}
+                                value={status}
+                            />
                         </div>
                         <div className="col-auto">
                             <button type="submit" className="btn btn-primary">Submit</button>
@@ -47,7 +81,14 @@ const Problem1 = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        
+                            {
+                                allData && allData.map((item,index) => (
+                                    <tr key={index}>
+                                        <td>{item.name}</td>
+                                        <td>{item.status}</td>
+                                    </tr>
+                                ))
+                            }
                         </tbody>
                     </table>
                 </div>
